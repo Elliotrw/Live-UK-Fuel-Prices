@@ -13,7 +13,7 @@ def get_all_prices():
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:130.0) Gecko/20100101 Firefox/130.0"
         }
         try:
-            response = requests.get(url, headers=headers, timeout=5)
+            response = requests.get(url, headers=headers, timeout=10)
         except requests.exceptions.RequestException as e:
             print(f"Error fetching {name}: {e}")
             continue
