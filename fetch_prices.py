@@ -1,30 +1,44 @@
-import requests
+import json, requests, subprocess
 
 from fetch_retailers import fetch_fuel_retailers
 from location import get_lat_lon, is_within_distance
 
 
+def fetch_data_via_curl(name, url, headers):
+    try:
+        command = [
+            'curl', '-s', url,
+            '-H', 'accept-language: en-GB,en;q=0.9',
+            '-H', f"User-Agent: {headers['User-Agent']}",
+            '--compressed'
+        ]
+        result = subprocess.run(command, capture_output=True, text=True)
+        return json.loads(result.stdout) if result.returncode == 0 else None
+    except (subprocess.CalledProcessError, json.JSONDecodeError) as e:
+        print(f"Error fetching {name} via curl: {e}")
+        return None
+
+
 def get_all_prices():
-    print("Fetching prices...")
     price_data = []
     for retailer in fetch_fuel_retailers():
         name, url = retailer["retailer"], retailer["url"]
         headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:130.0) Gecko/20100101 Firefox/130.0"
         }
+        
         try:
             response = requests.get(url, headers=headers, timeout=10)
-        except requests.exceptions.RequestException as e:
-            print(f"Error fetching {name}: {e}")
-            continue
-
-        try:
+            response.raise_for_status()
             data = response.json()
-        except requests.exceptions.JSONDecodeError as e:
-            print(f"Error decoding {name} JSON: {e}")
-            print(response.text)
-            continue
-        price_data.append({"retailer": name, "data": data})
+        except (requests.exceptions.RequestException, json.JSONDecodeError) as e:
+            print(f"Error fetching {name} via requests: {e}, trying curl...")
+            data = fetch_data_via_curl(name, url, headers)  # Tesco only allows curl commands
+
+        if data:
+            price_data.append({"retailer": name, "data": data})
+        else:
+            print(f"Failed to fetch data for {name} from {url}")
 
     return price_data
 
