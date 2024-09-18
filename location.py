@@ -4,7 +4,7 @@ from geopy.geocoders import Nominatim
 
 def get_lat_lon(location_str):
     geolocator = Nominatim(user_agent="UKFP")
-    location = geolocator.geocode(location_str)
+    location = geolocator.geocode(location_str, country_codes='GB')
 
     if location:
         return location.latitude, location.longitude
