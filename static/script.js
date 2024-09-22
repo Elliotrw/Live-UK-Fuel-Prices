@@ -23,15 +23,15 @@ function onLocationFound(e) {
         lc.stop();
     }
     else {
-        lc = requestLocation();
         console.log("Location accuracy is too low: " + radius + " meters");
+        lc = requestLocation();
     }
     fetchAndAddMarkers(location);
 }
 
 
 function onLocationError(e) {
-    alert(e.message);
+    console.error(e.message);
     lc.stop();
 }
 
