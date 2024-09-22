@@ -28,7 +28,7 @@ def get_all_prices():
         }
         
         try:
-            response = requests.get(url, headers=headers, timeout=10)
+            response = requests.get(url, headers=headers, timeout=5)
             response.raise_for_status()
             data = response.json()
         except (requests.exceptions.RequestException, json.JSONDecodeError) as e:
