@@ -65,10 +65,18 @@ function processFuelData(apiData) {
 }
 
 
-function addMarkersFromAPI(retailerDataArray) {
+function addMarkersFromAPI(retailerDataArray, latitude, longitude) {
     markers = L.markerClusterGroup({
         disableClusteringAtZoom: Math.floor(cameraZoom)  // integers only
     });
+
+    const circle = L.circleMarker([latitude, longitude], {
+        radius: 8,
+        color: 'blue',
+        fillColor: '#3388ff',
+        fillOpacity: 0.7
+    });
+    markers.addLayer(circle);
 
     retailerDataArray.forEach(retailerData => {
         const { data, retailer } = retailerData;
@@ -107,8 +115,8 @@ async function fetchAndAddMarkers(user_location) {
     const fuel_data = await getPrices(user_location);
     clearMarkers();
     retailerDataArray = processFuelData(fuel_data);
-    addMarkersFromAPI(retailerDataArray);
     const { latitude, longitude } = retailerDataArray[0].query_location;
+    addMarkersFromAPI(retailerDataArray, latitude, longitude);
     map.setView([latitude, longitude], cameraZoom);
 }
 
