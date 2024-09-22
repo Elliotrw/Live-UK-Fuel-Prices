@@ -66,7 +66,9 @@ function processFuelData(apiData) {
 
 
 function addMarkersFromAPI(retailerDataArray) {
-    markers = L.markerClusterGroup();
+    markers = L.markerClusterGroup({
+        disableClusteringAtZoom: Math.floor(cameraZoom)  // integers only
+    });
 
     retailerDataArray.forEach(retailerData => {
         const { data, retailer } = retailerData;
