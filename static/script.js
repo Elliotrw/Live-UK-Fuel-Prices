@@ -78,6 +78,15 @@ function addMarkersFromAPI(retailerDataArray, latitude, longitude) {
     });
     markers.addLayer(circle);
 
+    var redIcon = new L.Icon({
+        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
+        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowSize: [41, 41]
+    });
+
     retailerDataArray.forEach(retailerData => {
         const { data, retailer } = retailerData;
 
@@ -99,10 +108,10 @@ function addMarkersFromAPI(retailerDataArray, latitude, longitude) {
                 popupContent += `<br><small>Last updated: ${data.last_updated}</small>`;
                 popupContent += `<br><small><a href="https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}" target="_blank">Directions</a>`;
 
-                const marker = L.marker([station.location.latitude, station.location.longitude])
+                const redMarker = L.marker([station.location.latitude, station.location.longitude], { icon: redIcon })
                     .bindPopup(popupContent);
 
-                markers.addLayer(marker);
+                markers.addLayer(redMarker);
             });
         }
     });
