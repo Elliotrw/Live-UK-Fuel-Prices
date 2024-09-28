@@ -2,13 +2,15 @@ from geopy import distance
 from geopy.geocoders import Nominatim
 
 
-def get_lat_lon(location_str):
-    try:
-        lat, lon = map(
-            float, location_str.split(",")
-        )  # Check if location is already coordinates
-        return lat, lon
-    except ValueError:
+def get_lat_lon(location_str, location_type):
+    if location_type == "coordinates":
+        try:
+            latitude, longitude = map(float, location_str.split(","))
+            return latitude, longitude
+        except ValueError:
+            print(f"Invalid coordinate format - {location_str}")
+            return None, None
+    else:
         geolocator = Nominatim(user_agent="UKFP")
         location = geolocator.geocode(location_str, country_codes="GB")
 

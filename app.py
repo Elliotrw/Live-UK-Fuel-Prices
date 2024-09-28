@@ -3,6 +3,7 @@ import re
 from flask import Flask, request, render_template, jsonify
 
 from fetch_prices import get_all_prices, nearby_prices
+from location import get_lat_lon
 
 
 app = Flask(__name__)
@@ -22,7 +23,10 @@ def prices():
     if not validation_result:
         return jsonify({"error": "Invalid search term"}), 400
 
-    local_fuel_prices = nearby_prices(all_prices, query_location)
+    latitude, longitude = get_lat_lon(query_location, validation_result)
+    if not latitude and not longitude:
+        return {"message": "Location not found."}, 400
+    local_fuel_prices = nearby_prices(all_prices, latitude, longitude)
     if not local_fuel_prices:
         return {"message": "No fuel stations found."}, 200
     return local_fuel_prices
