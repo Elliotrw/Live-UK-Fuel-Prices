@@ -37,7 +37,6 @@ function onLocationError(e) {
 
 
 async function getPrices(location) {
-    // TODO: handle 404
     try {
         const response = await fetch(`/prices?location=${encodeURIComponent(location)}`);
         if (!response.ok) {
