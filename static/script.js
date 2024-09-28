@@ -37,16 +37,26 @@ function onLocationError(e) {
 
 
 async function getPrices(location) {
+    const statusMessages = {
+        400: "Location not recognised. Please try again.",
+        404: "Oops! We can't find that location right now. Try searching for a different place.",
+        500: "Server Error: Retry in a few moments.",
+    };
+
     try {
         const response = await fetch(`/prices?location=${encodeURIComponent(location)}`);
+
         if (!response.ok) {
-            throw new Error(`Response status: ${response.status}`);
+            const message = statusMessages[response.status] || `Unexpected Error: Response status ${response.status}`;
+            throw new Error(message);
         }
 
         const json = await response.json();
         return json;
     } catch (error) {
+        alert(error.message);
         console.error(error.message);
+        return null;
     }
 }
 
@@ -121,6 +131,10 @@ function addMarkersFromAPI(retailerDataArray, latitude, longitude) {
 
 async function fetchAndAddMarkers(user_location) {
     const fuel_data = await getPrices(user_location);
+    if (!fuel_data) {
+        return;
+    }
+
     clearMarkers();
     retailerDataArray = processFuelData(fuel_data);
     const { latitude, longitude } = retailerDataArray[0].query_location;
