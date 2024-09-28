@@ -3,13 +3,19 @@ from geopy.geocoders import Nominatim
 
 
 def get_lat_lon(location_str):
-    geolocator = Nominatim(user_agent="UKFP")
-    location = geolocator.geocode(location_str, country_codes='GB')
+    try:
+        lat, lon = map(
+            float, location_str.split(",")
+        )  # Check if location is already coordinates
+        return lat, lon
+    except ValueError:
+        geolocator = Nominatim(user_agent="UKFP")
+        location = geolocator.geocode(location_str, country_codes="GB")
 
-    if location:
-        return location.latitude, location.longitude
-    else:
-        return None, None
+        if location:
+            return location.latitude, location.longitude
+        else:
+            return None, None
 
 
 def is_within_distance(user_location, station_location, max_distance=5):
